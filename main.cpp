@@ -106,39 +106,39 @@ bool load_puzzle (const vector<vector<char>>& field, Puzzle& puzzle)
     for (int i = 0; i < ssize(field); i++) 
     {   
         // Check if the length of each line is equal
-        // int width = ssize(field.at(0));
-        // if (width != ssize(field.at(i))) 
-        // {
-        //     return false;
-        // }
+        int width = ssize(field.at(0));
+        if (width != ssize(field.at(i))) 
+        {
+            return false;
+        }
 
         // Inside each char of a specific line
         for (int j = 0; j < ssize(field.at(i)); j++) 
         {   
-            // If there is no exit point x don't load the puzzle, However the flamingo could spawn on the rescue spot
-            // if (field.at(i).at(j) == 'x' || field.at(i).at(j) == 'F')
-            // {
-            //     x_count++;
-            // }
-            // if (x_count < 1) 
-            // {
-            //     return false;
-            // }
-            // // // If there is more than one flamingo don't load the puzzle
-            // if (field.at(i).at(j) == 'f')
-            // {
-            //     f_count++;
-            // }
-            // if (f_count > 1 || f_count == 0) {
-            //     return false;
-            // }
-            // // If the char is not an option for the possibilities return false
-            // if (field.at(i).at(j) != 'x' && field.at(i).at(j) != '.' && field.at(i).at(j) != 'f'
-            //     && field.at(i).at(j) != 'F' && field.at(i).at(j) != 'r' && field.at(i).at(j) != '?')
-            // {
-            //     return false;
-            // }
+            // If there is no exit point x or the flamingo is already on the exit increment the number
+            if (field.at(i).at(j) == 'x' || field.at(i).at(j) == 'F')
+            {
+                x_count++;
+            }
+            // If there is more than one flamingo add 1 to the counter of flamingos
+            if (field.at(i).at(j) == 'f' || field.at(i).at(j) == 'F')
+            {
+                f_count++;
+            }
+            // If the char is not an option for the possibilities return false
+            if (field.at(i).at(j) != 'x' && field.at(i).at(j) != '.' && field.at(i).at(j) != 'f'
+                && field.at(i).at(j) != 'F' && field.at(i).at(j) != 'r' && field.at(i).at(j) != '?')
+            {
+                return false;
+            }
         }
+    }
+    if (f_count > 1 || f_count == 0) {
+        return false;
+    }
+    if (x_count < 1) 
+    {
+        return false;
     }
     puzzle.Map = field;
     return true;
