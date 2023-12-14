@@ -30,7 +30,8 @@ struct Puzzle
     // Terrain to traverse
     vector<vector<char>> Map;
     // Current position of the FLamingo
-
+    int flamingoRow;
+    int flamingoCol;
     // Current position of the solution
 
 };
@@ -41,7 +42,6 @@ bool operator== (const Puzzle& lhs, const Puzzle& rhs)
 /*  Postcondition: return value is true if `lhs` and `rhs` have the same puzzle state
 */
     return lhs.Map == rhs.Map;
-    return false;
 }
 
 bool operator!= (const Puzzle& lhs, const Puzzle& rhs)
@@ -56,9 +56,8 @@ bool is_solved (const Puzzle& puzzle)
 {// Precondition:
     assert (true);
 /*  Postcondition: return value is true if the flamingo is at the rescue position in `puzzle`
-*/
-    // TODO: implement this function
-    return false;
+*/  
+    return puzzle.Map.at(puzzle.flamingoRow).at(puzzle.flamingoCol) == RESCUE_CELL;
 }
 
 bool is_solvable (const Puzzle& puzzle)
@@ -67,8 +66,9 @@ bool is_solvable (const Puzzle& puzzle)
 /*  Postcondition: return value is true if the flamingo in `puzzle` is alive
 */
     // TODO: implement this function
-    
-    return false;
+    // Check if the flamingo is in a valid position (not on a rock and within bounds)
+    char currentCell = puzzle.Map.at(puzzle.flamingoRow).at(puzzle.flamingoCol);
+    return (currentCell == ICE_CELL || currentCell == RESCUE_CELL);
 }
 
 ostream& operator<< (ostream& os, const Puzzle& puzzle)
@@ -77,11 +77,11 @@ ostream& operator<< (ostream& os, const Puzzle& puzzle)
 /*  Postcondition: `puzzle` has been printed to `os`
 */
     // TODO: implement this function
-    for (size_t i = 0; i < ssize(puzzle.Map); ++i)
+    for (int i = 0; i < ssize(puzzle.Map); i++)
     {
         const vector<char>& row = puzzle.Map.at(i);
         
-        for (size_t j = 0; j < ssize(row); ++j)
+        for (int j = 0; j < ssize(row); j++)
         {
             os << row.at(j) << ' ';
         }
@@ -116,18 +116,18 @@ bool load_puzzle (const vector<vector<char>>& field, Puzzle& puzzle)
         for (int j = 0; j < ssize(field.at(i)); j++) 
         {   
             // If there is no exit point x or the flamingo is already on the exit increment the number
-            if (field.at(i).at(j) == 'x' || field.at(i).at(j) == 'F')
+            if (field.at(i).at(j) == RESCUE_CELL || field.at(i).at(j) == FLAMINGO_ON_RESCUE_CELL)
             {
                 x_count++;
             }
-            // If there is more than one flamingo add 1 to the counter of flamingos
-            if (field.at(i).at(j) == 'f' || field.at(i).at(j) == 'F')
+            // // If there is more than one flamingo add 1 to the counter of flamingos
+            if (field.at(i).at(j) == FLAMINGO_CELL || field.at(i).at(j) == FLAMINGO_ON_RESCUE_CELL)
             {
                 f_count++;
             }
-            // If the char is not an option for the possibilities return false
-            if (field.at(i).at(j) != 'x' && field.at(i).at(j) != '.' && field.at(i).at(j) != 'f'
-                && field.at(i).at(j) != 'F' && field.at(i).at(j) != 'r' && field.at(i).at(j) != '?')
+            // // If the char is not an option for the possibilities return false
+            if (field.at(i).at(j) != FLAMINGO_CELL && field.at(i).at(j) != ICE_CELL && field.at(i).at(j) != RESCUE_CELL
+                && field.at(i).at(j) != FLAMINGO_ON_RESCUE_CELL && field.at(i).at(j) != ROCK_CELL && field.at(i).at(j) != UNKNOWN_CELL)
             {
                 return false;
             }
@@ -247,18 +247,22 @@ int main ()
         switch(action) {
             case MoveNorth:
                 // TODO: perform puzzle move
+                puzzle.flamingoRow--;
                 steps++;
                 break;
             case MoveEast:
                 // TODO: perform puzzle move
+                puzzle.flamingoCol++;
                 steps++;
                 break;
             case MoveSouth:
                 // TODO: perform puzzle move
+                puzzle.flamingoRow++;
                 steps++;
                 break;
             case MoveWest:
                 // TODO: perform puzzle move
+                puzzle.flamingoCol--;
                 steps++;
                 break;
             case Reset:
