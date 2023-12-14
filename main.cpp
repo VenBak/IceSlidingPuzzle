@@ -27,7 +27,11 @@ enum Action
 struct Puzzle
 {
     // TODO: design your puzzle data structure
+    // Terrain to traverse
     vector<vector<char>> Map;
+    // Current position of the FLamingo
+
+    // Current position of the solution
 
 };
 
@@ -36,7 +40,7 @@ bool operator== (const Puzzle& lhs, const Puzzle& rhs)
     assert (true);
 /*  Postcondition: return value is true if `lhs` and `rhs` have the same puzzle state
 */
-    // TODO: implement this function
+    return lhs.Map == rhs.Map;
     return false;
 }
 
@@ -63,6 +67,7 @@ bool is_solvable (const Puzzle& puzzle)
 /*  Postcondition: return value is true if the flamingo in `puzzle` is alive
 */
     // TODO: implement this function
+    
     return false;
 }
 
@@ -72,6 +77,17 @@ ostream& operator<< (ostream& os, const Puzzle& puzzle)
 /*  Postcondition: `puzzle` has been printed to `os`
 */
     // TODO: implement this function
+    for (size_t i = 0; i < ssize(puzzle.Map); ++i)
+    {
+        const vector<char>& row = puzzle.Map.at(i);
+        
+        for (size_t j = 0; j < ssize(row); ++j)
+        {
+            os << row.at(j) << ' ';
+        }
+
+        os << '\n';
+    }
     return os;
 }
 
@@ -83,41 +99,48 @@ bool load_puzzle (const vector<vector<char>>& field, Puzzle& puzzle)
     // TODO: implement this function
     int x_count = 0;
     int f_count = 0;
-    
+    vector<char> puzzle_line;
+    vector<vector<char>> puzzle_total;
 
     // Inside each row
     for (int i = 0; i < ssize(field); i++) 
     {   
         // Check if the length of each line is equal
-        int width = ssize(field.at(0));
-        if (width != ssize(field.at(i))) 
-        {
-            return false;
-        }
+        // int width = ssize(field.at(0));
+        // if (width != ssize(field.at(i))) 
+        // {
+        //     return false;
+        // }
 
         // Inside each char of a specific line
-        for (int j = 0; j < ssize(field.at(i)); i++) 
+        for (int j = 0; j < ssize(field.at(i)); j++) 
         {   
             // If there is no exit point x don't load the puzzle, However the flamingo could spawn on the rescue spot
-            if (field.at(i).at(j) == 'x' || field.at(i).at(j) == 'F')
-            {
-                x_count++;
-            }
-            if (x_count < 1) 
-            {
-                return false;
-            }
-            // If there is more than one flamingo don't load the puzzle
-            if (field.at(i).at(j) == 'f')
-            {
-                f_count++;
-            }
-            if (f_count > 1) {
-                return false;
-            }
-            puzzle.Map.push_back(field.at(i).at(j));
+            // if (field.at(i).at(j) == 'x' || field.at(i).at(j) == 'F')
+            // {
+            //     x_count++;
+            // }
+            // if (x_count < 1) 
+            // {
+            //     return false;
+            // }
+            // // // If there is more than one flamingo don't load the puzzle
+            // if (field.at(i).at(j) == 'f')
+            // {
+            //     f_count++;
+            // }
+            // if (f_count > 1 || f_count == 0) {
+            //     return false;
+            // }
+            // // If the char is not an option for the possibilities return false
+            // if (field.at(i).at(j) != 'x' && field.at(i).at(j) != '.' && field.at(i).at(j) != 'f'
+            //     && field.at(i).at(j) != 'F' && field.at(i).at(j) != 'r' && field.at(i).at(j) != '?')
+            // {
+            //     return false;
+            // }
         }
     }
+    puzzle.Map = field;
     return true;
 }
 
