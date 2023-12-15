@@ -4,55 +4,47 @@
 const vector<vector<char>> BAD_FORMAT1 = {
     {'.', '.', '.'},
     {'.', 'f', '.'},
-    {'.', '.', '?'}
-};
+    {'.', '.', '?'}};
 const vector<vector<char>> BAD_FORMAT2 = {
     {'.', '.', '.'},
     {'.', 'f', '.', '.'},
-    {'.', '.', '.'}
-};
+    {'.', '.', '.'}};
 const vector<vector<char>> BAD_FORMAT3 = {
     {'.', '.', '.'},
     {'.', '.', '.'},
-    {'.', '.', '.'}
-};
+    {'.', '.', '.'}};
 const vector<vector<char>> BAD_FORMAT4 = {
     {'.', '.', '.'},
     {'.', 'f', '.'},
-    {'.', '.', 'f'}
-};
+    {'.', '.', 'f'}};
 const vector<vector<char>> CHALLENGE_1 = {
-    {'.','.','.','.','r','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','r','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','f','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','x','.','.'}
-};
+    {'.', '.', '.', '.', 'r', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', 'r', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', 'f', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', 'x', '.', '.'}};
 const vector<vector<char>> CHALLENGE_1_n = {
-    {'.','.','.','.','r','.','.','.','.','.'},
-    {'.','.','.','.','f','.','.','.','r','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','x','.','.'}
-};
+    {'.', '.', '.', '.', 'r', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', 'f', '.', '.', '.', 'r', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', 'x', '.', '.'}};
 const vector<vector<char>> CHALLENGE_1_ne = {
-    {'.','.','.','.','r','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','f','r','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','x','.','.'}
-};
+    {'.', '.', '.', '.', 'r', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', 'f', 'r', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', 'x', '.', '.'}};
 const vector<vector<char>> CHALLENGE_1_nes = {
-    {'.','.','.','.','r','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','r','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','.','.','.'},
-    {'.','.','.','.','.','.','.','F','.','.'}
-};
+    {'.', '.', '.', '.', 'r', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', 'r', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', 'F', '.', '.'}};
 
 TEST(loading, bad_format1)
 {
@@ -93,9 +85,36 @@ TEST(puzzle, is_solvable)
 
     EXPECT_TRUE(load_puzzle(CHALLENGE_1, puzzle));
     EXPECT_TRUE(is_solvable(puzzle));
-    // TODO: move north
+    while (is_solvable(puzzle) && check_rock(puzzle, MoveNorth))
+    {
+
+        if (puzzle.Map.at(puzzle.flamingoRow - 1).at(puzzle.flamingoCol) == RESCUE_CELL)
+        {
+            puzzle.Map.at(--puzzle.flamingoRow).at(puzzle.flamingoCol) = FLAMINGO_ON_RESCUE_CELL;
+            puzzle.Map.at(puzzle.flamingoRow + 1).at(puzzle.flamingoCol) = ICE_CELL;
+        }
+        else
+        {
+            puzzle.Map.at(--puzzle.flamingoRow).at(puzzle.flamingoCol) = FLAMINGO_CELL;
+            puzzle.Map.at(puzzle.flamingoRow + 1).at(puzzle.flamingoCol) = ICE_CELL;
+        }
+    }
     EXPECT_TRUE(is_solvable(puzzle));
-    // TODO: move west
+    while (is_solvable(puzzle) && check_rock(puzzle, MoveWest))
+    {
+
+        if (puzzle.Map.at(puzzle.flamingoRow).at(puzzle.flamingoCol - 1) == RESCUE_CELL)
+        {
+            puzzle.Map.at(puzzle.flamingoRow).at(--puzzle.flamingoCol) = FLAMINGO_ON_RESCUE_CELL;
+            puzzle.Map.at(puzzle.flamingoRow).at(puzzle.flamingoCol + 1) = ICE_CELL;
+        }
+        else
+        {
+
+            puzzle.Map.at(puzzle.flamingoRow).at(--puzzle.flamingoCol) = FLAMINGO_CELL;
+            puzzle.Map.at(puzzle.flamingoRow).at(puzzle.flamingoCol + 1) = ICE_CELL;
+        }
+    }
     EXPECT_FALSE(is_solvable(puzzle));
 }
 
@@ -138,6 +157,11 @@ TEST(move, north)
 
     EXPECT_TRUE(load_puzzle(CHALLENGE_1, puzzle));
     EXPECT_TRUE(load_puzzle(CHALLENGE_1_n, expected));
-    // TODO: move north
+    while (is_solvable(puzzle) && puzzle.Map.at(puzzle.flamingoRow - 1).at(puzzle.flamingoCol) != ROCK_CELL)
+    {
+
+        puzzle.Map.at(--puzzle.flamingoRow).at(puzzle.flamingoCol) = FLAMINGO_CELL;
+        puzzle.Map.at(puzzle.flamingoRow + 1).at(puzzle.flamingoCol) = ICE_CELL;
+    }
     EXPECT_EQ(puzzle, expected);
 }
